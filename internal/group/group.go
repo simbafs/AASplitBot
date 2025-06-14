@@ -70,3 +70,23 @@ func (g *Group) RecordsMsg() (string, error) {
 
 	return msg.String(), nil
 }
+
+func (g *Group) ResultMsg() (string, error) {
+	transcations, _, _ := g.Result()
+
+	msg := strings.Builder{}
+
+	for _, tr := range transcations {
+		fromName, err := g.username(tr.From)
+		if err != nil {
+			return "", fmt.Errorf("finding user %d: %w", tr.From, err)
+		}
+		toName, err := g.username(tr.To)
+		if err != nil {
+			return "", fmt.Errorf("finding user %d: %w", tr.To, err)
+		}
+		fmt.Fprintf(&msg, "%s -> %s $%d\n", fromName, toName, tr.Amount)
+	}
+
+	return msg.String(), nil
+}
