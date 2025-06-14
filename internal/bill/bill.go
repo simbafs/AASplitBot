@@ -1,70 +1,61 @@
 package bill
 
 import (
+	"fmt"
 	"slices"
 )
 
-type (
-	Money float64
-	Milli int64
-)
-
-const ratio = 100
-
-func (m Money) Milli() Milli {
-	return Milli(m * ratio)
-}
-
-func (m Milli) Money() Money {
-	return Money(m) / ratio
-}
-
 type Record struct {
 	User   int64
-	Amount Money
+	Amount int
 	Shared []int64
 }
 
 type Transcation struct {
 	From   int64
 	To     int64
-	Amount Milli
+	Amount int
 }
 
 type Person struct {
 	ID     int64
-	Amount Milli
+	Amount int
 }
 
 func Split(records []Record) (result []Transcation, creditors, debtors []Person) {
-	balances := make(map[int64]float64)
+	balances := make(map[int64]int)
 
 	for _, r := range records {
-		balances[r.User] += float64(r.Amount.Milli())
+		n := len(r.Shared)
+		amount := r.Amount
 
-		n := Milli(len(r.Shared))
-		amount := r.Amount.Milli()
+		balances[r.User] += amount
 
 		perPerson := amount / n
 		remain := amount - perPerson*n
 
 		for _, user := range r.Shared {
-			balances[user] -= float64(perPerson + remain)
+			balances[user] -= perPerson + remain
 			// 第一個人負責負擔取整造成的剩餘
 			remain = 0
 		}
+
+		for id, balance := range balances {
+			fmt.Printf("User %d: Balance %d\n", id, balance)
+		}
+		fmt.Println("-----")
 	}
 
 	for id, balance := range balances {
 		if balance > 0 {
 			creditors = append(creditors, Person{
 				ID:     id,
-				Amount: Milli(balance),
+				Amount: balance,
 			})
 		} else if balance < 0 {
 			debtors = append(debtors, Person{
 				ID:     id,
-				Amount: Milli(-balance),
+				Amount: -balance,
 			})
 		}
 	}
@@ -76,6 +67,7 @@ func Split(records []Record) (result []Transcation, creditors, debtors []Person)
 		return int(b.Amount - a.Amount)
 	})
 
+	// TODO: use priority queue to optimize the matching process
 	c := make([]Person, len(creditors))
 	copy(c, creditors)
 	d := make([]Person, len(debtors))

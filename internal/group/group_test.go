@@ -39,7 +39,7 @@ func TestResultMsg(t *testing.T) {
 	g := group.New(0, username)
 
 	for _, r := range records {
-		g.AddRecord(r.User, r.Shared, float64(r.Amount))
+		g.AddRecord(r.User, r.Shared, r.Amount)
 	}
 
 	out, err := g.RecordsMsg()
@@ -47,7 +47,16 @@ func TestResultMsg(t *testing.T) {
 		t.Fatalf("Failed to get records message: %v", err)
 	}
 
-	expected := "Records:\n$100(1)\n1, 2, 3\n$10(2)\n2, 3\n$7(1)\n1, 2, 3\n$100(4)\n4, 5\n"
+	expected := `Records:
+$100(1)
+  1, 2, 3
+$10(2)
+  2, 3
+$7(1)
+  1, 2, 3
+$100(4)
+  4, 5
+`
 	if out != expected {
 		t.Errorf("Expected message:\n%s\nGot:\n%s", expected, out)
 	}

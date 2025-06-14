@@ -23,11 +23,11 @@ func New(chat int64, username Username) *Group {
 	}
 }
 
-func (g *Group) AddRecord(from int64, shared []int64, amount float64) {
+func (g *Group) AddRecord(from int64, shared []int64, amount int) {
 	r := bill.Record{
 		User:   from,
 		Shared: shared,
-		Amount: bill.Money(amount),
+		Amount: amount,
 	}
 
 	g.bills = append(g.bills, r)
@@ -51,7 +51,7 @@ func (g *Group) RecordsMsg() (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("finding user %d: %w", r.User, err)
 		}
-		fmt.Fprintf(&msg, "$%f(%s)\n", r.Amount, name)
+		fmt.Fprintf(&msg, "$%d(%s)\n", r.Amount, name)
 		first := true
 		for _, s := range r.Shared {
 			name, err = g.username(s)
@@ -59,7 +59,7 @@ func (g *Group) RecordsMsg() (string, error) {
 				return "", fmt.Errorf("finding user %d: %w", s, err)
 			}
 			if first {
-				fmt.Fprintf(&msg, "%s", name)
+				fmt.Fprintf(&msg, "  %s", name)
 			} else {
 				fmt.Fprintf(&msg, ", %s", name)
 			}
