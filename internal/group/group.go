@@ -51,13 +51,19 @@ func (g *Group) RecordsMsg() (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("finding user %d: %w", r.User, err)
 		}
-		fmt.Fprintf(&msg, "$%f(%s)", r.Amount, name)
+		fmt.Fprintf(&msg, "$%f(%s)\n", r.Amount, name)
+		first := true
 		for _, s := range r.Shared {
 			name, err = g.username(s)
 			if err != nil {
 				return "", fmt.Errorf("finding user %d: %w", s, err)
 			}
-			fmt.Fprintf(&msg, ", %s", name)
+			if first {
+				fmt.Fprintf(&msg, "%s", name)
+			} else {
+				fmt.Fprintf(&msg, ", %s", name)
+			}
+			first = false
 		}
 		msg.WriteString("\n")
 	}
