@@ -5,8 +5,6 @@ import (
 	"slices"
 )
 
-type UserID = int64
-
 type (
 	Money float64
 	Milli int64
@@ -31,24 +29,24 @@ func (m Milli) String() string {
 }
 
 type Record struct {
-	User   UserID
+	User   int64
 	Amount Money
-	Shared []UserID
+	Shared []int64
 }
 
 type Transcation struct {
-	From   UserID
-	To     UserID
+	From   int64
+	To     int64
 	Amount Milli
 }
 
 type Person struct {
-	ID     UserID
+	ID     int64
 	Amount Milli
 }
 
 func Split(records []Record) (result []Transcation, creditors, debtors []Person) {
-	balances := make(map[UserID]float64)
+	balances := make(map[int64]float64)
 
 	for _, r := range records {
 		balances[r.User] += float64(r.Amount.Milli())
