@@ -47,8 +47,7 @@ func TestRecordMsg(t *testing.T) {
 		t.Fatalf("Failed to get records message: %v", err)
 	}
 
-	expected := `Records:
-$100(1)
+	expected := `$100(1)
   1, 2, 3
 $10(2)
   2, 3

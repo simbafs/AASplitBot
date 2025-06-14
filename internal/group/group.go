@@ -45,7 +45,6 @@ func (g *Group) RecordsMsg() (string, error) {
 	}
 
 	msg := strings.Builder{}
-	msg.WriteString("Records:\n")
 	for _, r := range g.bills {
 		name, err := g.username(r.User)
 		if err != nil {
