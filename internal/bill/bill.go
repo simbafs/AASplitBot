@@ -1,7 +1,6 @@
 package bill
 
 import (
-	"fmt"
 	"slices"
 )
 
@@ -16,16 +15,8 @@ func (m Money) Milli() Milli {
 	return Milli(m * ratio)
 }
 
-func (m Money) String() string {
-	return fmt.Sprintf("%.2f", m)
-}
-
 func (m Milli) Money() Money {
 	return Money(m) / ratio
-}
-
-func (m Milli) String() string {
-	return fmt.Sprintf("%d", m)
 }
 
 type Record struct {
