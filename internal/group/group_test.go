@@ -1,16 +1,11 @@
 package group_test
 
 import (
-	"strconv"
 	"testing"
 
 	"splitbill/internal/bill"
 	"splitbill/internal/group"
 )
-
-func username(id int64) (string, error) {
-	return strconv.Itoa(int(id)), nil
-}
 
 func TestRecordMsg(t *testing.T) {
 	records := []bill.Record{
@@ -36,7 +31,7 @@ func TestRecordMsg(t *testing.T) {
 		},
 	}
 
-	g := group.New(0, username)
+	g := group.New()
 
 	for _, r := range records {
 		g.AddRecord(r.User, r.Shared, r.Amount)
@@ -85,7 +80,7 @@ func TestResultMsg(t *testing.T) {
 		},
 	}
 
-	g := group.New(0, username)
+	g := group.New()
 
 	for _, r := range records {
 		g.AddRecord(r.User, r.Shared, r.Amount)

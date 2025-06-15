@@ -3,27 +3,28 @@ package group
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"splitbill/internal/bill"
 )
 
-type Username = func(int64) (string, error)
-
 type Group struct {
-	chatID   int64
-	bills    []bill.Record
-	username Username
+	mutex sync.Mutex
+	bills []bill.Record
+	users map[int64]string
 }
 
-func New(chat int64, username Username) *Group {
+func New() *Group {
 	return &Group{
-		chatID:   chat,
-		bills:    []bill.Record{},
-		username: username,
+		bills: []bill.Record{},
+		users: make(map[int64]string),
 	}
 }
 
 func (g *Group) AddRecord(from int64, shared []int64, amount int) {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
+
 	r := bill.Record{
 		User:   from,
 		Shared: shared,
@@ -46,16 +47,16 @@ func (g *Group) RecordsMsg() (string, error) {
 
 	msg := strings.Builder{}
 	for _, r := range g.bills {
-		name, err := g.username(r.User)
-		if err != nil {
-			return "", fmt.Errorf("finding user %d: %w", r.User, err)
+		name, ok := g.users[r.User]
+		if !ok {
+			return "", fmt.Errorf("finding user %d", r.User)
 		}
 		fmt.Fprintf(&msg, "$%d(%s)\n", r.Amount, name)
 		first := true
 		for _, s := range r.Shared {
-			name, err = g.username(s)
-			if err != nil {
-				return "", fmt.Errorf("finding user %d: %w", s, err)
+			name, ok = g.users[s]
+			if !ok {
+				return "", fmt.Errorf("finding user %d", s)
 			}
 			if first {
 				fmt.Fprintf(&msg, "  %s", name)
@@ -76,13 +77,13 @@ func (g *Group) ResultMsg() (string, error) {
 	msg := strings.Builder{}
 
 	for _, tr := range transcations {
-		fromName, err := g.username(tr.From)
-		if err != nil {
-			return "", fmt.Errorf("finding user %d: %w", tr.From, err)
+		fromName, ok := g.users[tr.From]
+		if !ok {
+			return "", fmt.Errorf("finding user %d", tr.From)
 		}
-		toName, err := g.username(tr.To)
-		if err != nil {
-			return "", fmt.Errorf("finding user %d: %w", tr.To, err)
+		toName, ok := g.users[tr.To]
+		if !ok {
+			return "", fmt.Errorf("finding user %d", tr.To)
 		}
 		fmt.Fprintf(&msg, "%s -> %s $%d\n", fromName, toName, tr.Amount)
 	}
