@@ -3,14 +3,14 @@ package config
 import "os"
 
 type Config struct {
-	APIKey string
+	Token string
 }
 
 func NewConfigWithEnv() *Config {
 	c := &Config{}
 
-	if apiKey, ok := os.LookupEnv("API_KEY"); ok {
-		c.APIKey = apiKey
+	if token, ok := os.LookupEnv("BOT_TOKEN"); ok {
+		c.Token = token
 	}
 
 	return c
