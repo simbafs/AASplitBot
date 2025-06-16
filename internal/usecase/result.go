@@ -1,4 +1,4 @@
-package bot
+package usecase
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -6,7 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 )
 
-func (bot *Bot) ResultHandler() ext.Handler {
+func (bot *AASplitBot) Result() ext.Handler {
 	return handlers.NewCommand("result", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		send := sender(b, ctx)
 		data := bot.storage.Get(id(ctx))

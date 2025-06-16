@@ -1,4 +1,4 @@
-package bot
+package usecase
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -6,8 +6,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 )
 
-func (bot *Bot) ListRecordHandler() ext.Handler {
-	return handlers.NewCommand("listRecord", func(b *gotgbot.Bot, ctx *ext.Context) error {
+// for /listBill
+func (bot *AASplitBot) ListBill() ext.Handler {
+	return handlers.NewCommand("listBill", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		send := sender(b, ctx)
 		data := bot.storage.Get(id(ctx))
 		defer bot.storage.Set(id(ctx), data)

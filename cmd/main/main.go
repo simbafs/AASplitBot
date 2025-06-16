@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"time"
 
-	"splitbill/internal/bot"
 	"splitbill/internal/config"
+	"splitbill/internal/usecase"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -24,7 +24,6 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("getting bot info: %w", err)
 	}
-
 	slog.Info("authorized", "username", me.Username, "id", me.Id)
 
 	dispatcher := ext.NewDispatcher(&ext.DispatcherOpts{
@@ -35,24 +34,23 @@ func run() error {
 		MaxRoutines: ext.DefaultMaxRoutines,
 	})
 
-	bot, err := bot.New()
+	cases, err := usecase.New()
 	if err != nil {
 		return fmt.Errorf("creating my bot: %w", err)
 	}
 
-	dispatcher.AddHandler(bot.RecordHandler())
-	dispatcher.AddHandler(bot.StartHandler())
-	dispatcher.AddHandler(bot.JoinHandler())
-	dispatcher.AddHandler(bot.ListUserHandler())
-	dispatcher.AddHandler(bot.ListRecordHandler())
-	dispatcher.AddHandler(bot.ResultHandler())
+	dispatcher.AddHandler(cases.Bill())
+	dispatcher.AddHandler(cases.Start())
+	dispatcher.AddHandler(cases.Join())
+	dispatcher.AddHandler(cases.ListUser())
+	dispatcher.AddHandler(cases.ListBill())
+	dispatcher.AddHandler(cases.Result())
 
 	updater := ext.NewUpdater(dispatcher, nil)
 
 	if err := updater.StartPolling(b, &ext.PollingOpts{
 		DropPendingUpdates: true,
 		GetUpdatesOpts: &gotgbot.GetUpdatesOpts{
-			Timeout: 9,
 			RequestOpts: &gotgbot.RequestOpts{
 				Timeout: time.Second * 10,
 			},

@@ -1,4 +1,4 @@
-package bot
+package usecase
 
 import (
 	"splitbill/internal/group"
@@ -9,7 +9,7 @@ import (
 )
 
 // for command /join
-func (bot *Bot) JoinHandler() ext.Handler {
+func (bot *AASplitBot) Join() ext.Handler {
 	return handlers.NewCommand("join", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		send := sender(b, ctx)
 		data := bot.storage.Get(id(ctx))

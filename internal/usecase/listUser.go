@@ -1,4 +1,4 @@
-package bot
+package usecase
 
 import (
 	"strings"
@@ -9,7 +9,7 @@ import (
 )
 
 // for /listUser
-func (bot *Bot) ListUserHandler() ext.Handler {
+func (bot *AASplitBot) ListUser() ext.Handler {
 	return handlers.NewCommand("listUser", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		send := sender(b, ctx)
 		data := bot.storage.Get(id(ctx))

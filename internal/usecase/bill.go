@@ -1,4 +1,4 @@
-package bot
+package usecase
 
 import (
 	"fmt"
@@ -51,17 +51,17 @@ func buildKeyboard(r group.Record, g *group.Group) gotgbot.InlineKeyboardMarkup 
 	}
 }
 
-func (bot *Bot) RecordHandler() ext.Handler {
-	return handlers.NewConversation([]ext.Handler{handlers.NewMessage(message.HasPrefix("$"), bot.startRecord)},
+func (bot *AASplitBot) Bill() ext.Handler {
+	return handlers.NewConversation([]ext.Handler{handlers.NewMessage(message.HasPrefix("$"), bot.billStart)},
 		map[string][]ext.Handler{
-			ChooseShared: {handlers.NewCallback(callbackquery.All, bot.chooseSharedHandler)},
+			ChooseShared: {handlers.NewCallback(callbackquery.All, bot.billChooseShared)},
 		}, &handlers.ConversationOpts{
-			Exits:        []ext.Handler{handlers.NewCommand("cancel", bot.cancel)},
+			Exits:        []ext.Handler{handlers.NewCommand("cancel", bot.billCancel)},
 			AllowReEntry: true,
 		})
 }
 
-func (bot *Bot) startRecord(b *gotgbot.Bot, ctx *ext.Context) error {
+func (bot *AASplitBot) billStart(b *gotgbot.Bot, ctx *ext.Context) error {
 	send := sender(b, ctx)
 	data := bot.storage.Get(id(ctx))
 	defer bot.storage.Set(id(ctx), data)
@@ -115,7 +115,7 @@ func (bot *Bot) startRecord(b *gotgbot.Bot, ctx *ext.Context) error {
 	return handlers.NextConversationState(ChooseShared)
 }
 
-func (bot *Bot) chooseSharedHandler(b *gotgbot.Bot, ctx *ext.Context) error {
+func (bot *AASplitBot) billChooseShared(b *gotgbot.Bot, ctx *ext.Context) error {
 	send := sender(b, ctx)
 	data := bot.storage.Get(id(ctx))
 	defer bot.storage.Set(id(ctx), data)
@@ -200,6 +200,6 @@ func (bot *Bot) chooseSharedHandler(b *gotgbot.Bot, ctx *ext.Context) error {
 	return handlers.NextConversationState(ChooseShared)
 }
 
-func (bot *Bot) cancel(b *gotgbot.Bot, ctx *ext.Context) error {
+func (bot *AASplitBot) billCancel(b *gotgbot.Bot, ctx *ext.Context) error {
 	return handlers.EndConversation()
 }

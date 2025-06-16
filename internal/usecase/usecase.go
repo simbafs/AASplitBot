@@ -1,4 +1,4 @@
-package bot // TODO: renmae this package
+package usecase // TODO: renmae this package
 
 import (
 	"fmt"
@@ -32,16 +32,16 @@ type ChatData struct {
 	Records map[int64]group.Record
 }
 
-type Bot struct {
+type AASplitBot struct {
 	storage storage.Storage[ChatData]
 }
 
-func New() (*Bot, error) {
+func New() (*AASplitBot, error) {
 	s, err := storage.NewMemory[ChatData]("data.gob")
 	if err != nil {
 		return nil, fmt.Errorf("creating storage: %w", err)
 	}
-	return &Bot{
+	return &AASplitBot{
 		storage: s,
 	}, nil
 }

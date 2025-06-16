@@ -1,4 +1,4 @@
-package bot
+package usecase
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -7,7 +7,7 @@ import (
 )
 
 // for command /start
-func (b *Bot) StartHandler() ext.Handler {
+func (bot *AASplitBot) Start() ext.Handler {
 	return handlers.NewCommand("start", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		msg := `歡迎使用分帳機器人
 開始使用之前每個人都要用指令 /join 加入分帳
