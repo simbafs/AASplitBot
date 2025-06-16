@@ -41,33 +41,24 @@ func (g *Group) Result() (result []Transcation, creditors, debtors []Person) {
 
 func (g *Group) RecordsMsg() (string, error) {
 	if len(g.Bills) == 0 {
-		return "No records found.", nil
+		return "沒有紀錄", nil
 	}
 
-	msg := strings.Builder{}
+	if len(g.Bills) == 0 {
+		return "目前沒有任何分帳紀錄", nil
+	}
+
+	var records []string
 	for _, r := range g.Bills {
-		name, ok := g.Users[r.User]
-		if !ok {
-			return "", fmt.Errorf("finding user %d", r.User)
+		usernames := make([]string, 0, len(r.Shared))
+		for _, id := range r.Shared {
+			usernames = append(usernames, g.Username(id))
 		}
-		fmt.Fprintf(&msg, "$%d(%s)\n", r.Amount, name)
-		first := true
-		for _, s := range r.Shared {
-			name, ok = g.Users[s]
-			if !ok {
-				return "", fmt.Errorf("finding user %d", s)
-			}
-			if first {
-				fmt.Fprintf(&msg, "  %s", name)
-			} else {
-				fmt.Fprintf(&msg, ", %s", name)
-			}
-			first = false
-		}
-		msg.WriteString("\n")
+
+		records = append(records, fmt.Sprintf("%s 代墊了 %d 元，%s 要付錢", g.Username(r.User), r.Amount, strings.Join(usernames, "、")))
 	}
 
-	return msg.String(), nil
+	return fmt.Sprintf("目前的分帳紀錄有：\n%s", strings.Join(records, "\n")), nil
 }
 
 func (g *Group) ResultMsg() (string, error) {

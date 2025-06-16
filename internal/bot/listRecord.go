@@ -1,9 +1,6 @@
 package bot
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
@@ -19,20 +16,11 @@ func (bot *Bot) ListRecordHandler() ext.Handler {
 			return send("目前還這個群組還沒有資料")
 		}
 
-		if len(data.Group.Bills) == 0 {
-			return send("目前沒有任何分帳紀錄")
+		msg, err := data.Group.RecordsMsg()
+		if err != nil {
+			return send("無法取得紀錄: %s", err)
 		}
 
-		var records []string
-		for _, r := range data.Group.Bills {
-			usernames := make([]string, 0, len(r.Shared))
-			for _, id := range r.Shared {
-				usernames = append(usernames, data.Group.Username(id))
-			}
-
-			records = append(records, fmt.Sprintf("%s 代墊了 %d 元，%s 要付錢", data.Group.Username(r.User), r.Amount, strings.Join(usernames, "、")))
-		}
-
-		return send("目前的分帳紀錄有：\n%s", strings.Join(records, "\n"))
+		return send(msg)
 	})
 }
