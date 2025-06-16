@@ -1,7 +1,6 @@
 package group
 
 import (
-	"fmt"
 	"slices"
 )
 
@@ -39,11 +38,6 @@ func Split(records []Record) (result []Transcation, creditors, debtors []Person)
 			// 第一個人負責負擔取整造成的剩餘
 			remain = 0
 		}
-
-		for id, balance := range balances {
-			fmt.Printf("User %d: Balance %d\n", id, balance)
-		}
-		fmt.Println("-----")
 	}
 
 	for id, balance := range balances {

@@ -33,12 +33,6 @@ func (g *Group) AddRecord(from int64, shared []int64, amount int) {
 	g.Bills = append(g.Bills, r)
 }
 
-func (g *Group) Result() (result []Transcation, creditors, debtors []Person) {
-	result, creditors, debtors = Split(g.Bills)
-
-	return result, creditors, debtors
-}
-
 func (g *Group) RecordsMsg() (string, error) {
 	if len(g.Bills) == 0 {
 		return "沒有紀錄", nil
@@ -62,7 +56,7 @@ func (g *Group) RecordsMsg() (string, error) {
 }
 
 func (g *Group) ResultMsg() (string, error) {
-	transcations, _, _ := g.Result()
+	transcations, _, _ := Split(g.Bills)
 
 	msg := strings.Builder{}
 
@@ -75,7 +69,7 @@ func (g *Group) ResultMsg() (string, error) {
 		if !ok {
 			return "", fmt.Errorf("finding user %d", tr.To)
 		}
-		fmt.Fprintf(&msg, "%s -> %s $%d\n", fromName, toName, tr.Amount)
+		fmt.Fprintf(&msg, "%s 要給 %s $%d 元\n", fromName, toName, tr.Amount)
 	}
 
 	return msg.String(), nil

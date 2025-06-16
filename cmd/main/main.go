@@ -45,6 +45,7 @@ func run() error {
 	dispatcher.AddHandler(bot.JoinHandler())
 	dispatcher.AddHandler(bot.ListUserHandler())
 	dispatcher.AddHandler(bot.ListRecordHandler())
+	dispatcher.AddHandler(bot.ResultHandler())
 
 	updater := ext.NewUpdater(dispatcher, nil)
 
