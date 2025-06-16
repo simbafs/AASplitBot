@@ -1,13 +1,11 @@
-package bill_test
+package group
 
 import (
 	"testing"
-
-	"splitbill/internal/bill"
 )
 
 func TestBill(t *testing.T) {
-	records := []bill.Record{
+	records := []Record{
 		{
 			User:   1,
 			Amount: 100,
@@ -36,7 +34,7 @@ func TestBill(t *testing.T) {
 	// 3. - 33 - 5 - 2     = -40       +40 \
 	// 2. - 33 + 5 - 2     = -30           +30 \
 
-	out := []bill.Transcation{
+	out := []Transcation{
 		{
 			From:   5,
 			To:     4,
@@ -53,7 +51,7 @@ func TestBill(t *testing.T) {
 			Amount: 30,
 		},
 	}
-	transcations, creditors, debtors := bill.Split(records)
+	transcations, creditors, debtors := Split(records)
 	t.Log("Transcations:")
 	for _, tr := range transcations {
 		t.Log(tr)

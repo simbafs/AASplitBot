@@ -1,14 +1,11 @@
-package group_test
+package group
 
 import (
 	"testing"
-
-	"splitbill/internal/bill"
-	"splitbill/internal/group"
 )
 
 func TestRecordMsg(t *testing.T) {
-	records := []bill.Record{
+	records := []Record{
 		{
 			User:   1,
 			Amount: 100,
@@ -31,7 +28,7 @@ func TestRecordMsg(t *testing.T) {
 		},
 	}
 
-	g := group.New()
+	g := New()
 
 	for _, r := range records {
 		g.AddRecord(r.User, r.Shared, r.Amount)
@@ -57,7 +54,7 @@ $100(4)
 }
 
 func TestResultMsg(t *testing.T) {
-	records := []bill.Record{
+	records := []Record{
 		{
 			User:   1,
 			Amount: 100,
@@ -80,7 +77,7 @@ func TestResultMsg(t *testing.T) {
 		},
 	}
 
-	g := group.New()
+	g := New()
 
 	for _, r := range records {
 		g.AddRecord(r.User, r.Shared, r.Amount)

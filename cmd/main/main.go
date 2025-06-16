@@ -35,11 +35,16 @@ func run() error {
 		MaxRoutines: ext.DefaultMaxRoutines,
 	})
 
-	bot := bot.New()
+	bot, err := bot.New()
+	if err != nil {
+		return fmt.Errorf("creating my bot: %w", err)
+	}
 
 	dispatcher.AddHandler(bot.RecordHandler())
 	dispatcher.AddHandler(bot.StartHandler())
-	dispatcher.AddHandler(bot.Inithandler())
+	dispatcher.AddHandler(bot.JoinHandler())
+	dispatcher.AddHandler(bot.ListUserHandler())
+	dispatcher.AddHandler(bot.ListRecordHandler())
 
 	updater := ext.NewUpdater(dispatcher, nil)
 
