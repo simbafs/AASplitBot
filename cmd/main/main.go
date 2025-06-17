@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"time"
 
-	"splitbill/internal/config"
-	"splitbill/internal/usecase"
+	"aasplitbot/internal/config"
+	"aasplitbot/internal/usecase"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"

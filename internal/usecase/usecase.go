@@ -3,8 +3,8 @@ package usecase // TODO: renmae this package
 import (
 	"fmt"
 
-	"splitbill/internal/group"
-	"splitbill/internal/storage"
+	"aasplitbot/internal/group"
+	"aasplitbot/internal/storage"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"

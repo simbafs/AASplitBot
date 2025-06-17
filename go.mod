@@ -1,4 +1,4 @@
-module splitbill
+module aasplitbot
 
 go 1.24.3
 
