@@ -46,10 +46,10 @@ func (g *Group) RecordsMsg() (string, error) {
 	for _, r := range g.Bills {
 		usernames := make([]string, 0, len(r.Shared))
 		for _, id := range r.Shared {
-			usernames = append(usernames, g.Username(id))
+			usernames = append(usernames, "@"+g.Username(id))
 		}
 
-		records = append(records, fmt.Sprintf("%s 代墊了 %d 元，%s 要付錢", g.Username(r.User), r.Amount, strings.Join(usernames, "、")))
+		records = append(records, fmt.Sprintf("@%s 代墊了 %d 元，%s 要付錢", g.Username(r.User), r.Amount, strings.Join(usernames, "、")))
 	}
 
 	return fmt.Sprintf("目前的分帳紀錄有：\n%s", strings.Join(records, "\n")), nil
@@ -69,7 +69,7 @@ func (g *Group) ResultMsg() (string, error) {
 		if !ok {
 			return "", fmt.Errorf("finding user %d", tr.To)
 		}
-		fmt.Fprintf(&msg, "%s 要給 %s $%d 元\n", fromName, toName, tr.Amount)
+		fmt.Fprintf(&msg, "@%s 要給 @%s $%d 元\n", fromName, toName, tr.Amount)
 	}
 
 	return msg.String(), nil
