@@ -39,12 +39,9 @@ func run() error {
 		return fmt.Errorf("creating my bot: %w", err)
 	}
 
-	dispatcher.AddHandler(cases.Bill())
-	dispatcher.AddHandler(cases.Start())
-	dispatcher.AddHandler(cases.Join())
-	dispatcher.AddHandler(cases.ListUser())
-	dispatcher.AddHandler(cases.ListBill())
-	dispatcher.AddHandler(cases.Result())
+	if err := cases.SetCommand(b, dispatcher); err != nil {
+		return fmt.Errorf("setting commands: %w", err)
+	}
 
 	updater := ext.NewUpdater(dispatcher, nil)
 

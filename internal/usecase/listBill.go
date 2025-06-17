@@ -6,9 +6,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 )
 
-// for /listBill
+// for /listbill
 func (bot *AASplitBot) ListBill() ext.Handler {
-	return handlers.NewCommand("listBill", func(b *gotgbot.Bot, ctx *ext.Context) error {
+	return handlers.NewCommand("listbill", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		send := sender(b, ctx)
 		data := bot.storage.Get(id(ctx))
 		defer bot.storage.Set(id(ctx), data)

@@ -8,9 +8,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 )
 
-// for /listUser
+// for /listuser
 func (bot *AASplitBot) ListUser() ext.Handler {
-	return handlers.NewCommand("listUser", func(b *gotgbot.Bot, ctx *ext.Context) error {
+	return handlers.NewCommand("listuser", func(b *gotgbot.Bot, ctx *ext.Context) error {
 		send := sender(b, ctx)
 		data := bot.storage.Get(id(ctx))
 		defer bot.storage.Set(id(ctx), data)
