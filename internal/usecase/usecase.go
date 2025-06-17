@@ -2,6 +2,7 @@ package usecase // TODO: renmae this package
 
 import (
 	"fmt"
+	"log/slog"
 
 	"aasplitbot/internal/group"
 	"aasplitbot/internal/storage"
@@ -44,4 +45,36 @@ func New() (*AASplitBot, error) {
 	return &AASplitBot{
 		storage: s,
 	}, nil
+}
+
+func (bot *AASplitBot) SetCommand(b *gotgbot.Bot, d *ext.Dispatcher) error {
+	commands := []gotgbot.BotCommand{
+		{Command: "help", Description: "顯示可用指令"},
+		{Command: "join", Description: "加入分帳"},
+		{Command: "result", Description: "顯示分帳結果"},
+		{Command: "listuser", Description: "列出所有使用者"},
+		{Command: "listbill", Description: "列出所有分帳紀錄"},
+		{Command: "start", Description: "歡迎訊息"},
+	}
+	d.AddHandler(bot.Bill())
+	d.AddHandler(bot.Start())        // /start
+	d.AddHandler(bot.Join())         // /join
+	d.AddHandler(bot.ListUser())     // listuser
+	d.AddHandler(bot.ListBill())     // listbill
+	d.AddHandler(bot.Result())       // result
+	d.AddHandler(bot.Help(commands)) // help
+
+	ok, err := b.SetMyCommands(commands, &gotgbot.SetMyCommandsOpts{
+		Scope: gotgbot.BotCommandScopeAllGroupChats{},
+	})
+	if err != nil {
+		return fmt.Errorf("setting commands: %w", err)
+	}
+	if !ok {
+		slog.Error("failed to set commands")
+	} else {
+		slog.Info("commands set successfully")
+	}
+
+	return nil
 }
