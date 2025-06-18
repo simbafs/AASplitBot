@@ -18,17 +18,25 @@ import (
 
 var ChooseShared = "choose-shared"
 
-func buildKeyboard(r group.Record, g *group.Group) gotgbot.InlineKeyboardMarkup {
-	inlineKeyboard := [][]gotgbot.InlineKeyboardButton{{
-		{Text: "全選", CallbackData: "all"},
-		{Text: "全不選", CallbackData: "none"},
-	}}
+type buildKeyboardOpt struct {
+	NoBatch  bool // 是否不使用批次處理
+	NoCancel bool // 是否不顯示取消按鈕
+}
+
+func buildKeyboard(choosed []int64, g *group.Group, opt *buildKeyboardOpt) gotgbot.InlineKeyboardMarkup {
+	inlineKeyboard := [][]gotgbot.InlineKeyboardButton{}
+	if opt == nil || !opt.NoBatch {
+		inlineKeyboard = append(inlineKeyboard, []gotgbot.InlineKeyboardButton{
+			{Text: "全選", CallbackData: "all"},
+			{Text: "全不選", CallbackData: "none"},
+		})
+	}
 
 	for ids := range slices.Chunk(g.IDs(), 3) {
 		line := make([]gotgbot.InlineKeyboardButton, 0, 3)
 		for _, id := range ids {
 			text := ""
-			if slices.Contains(r.Shared, id) {
+			if slices.Contains(choosed, id) {
 				text = "✅ " + g.Username(id)
 			} else {
 				text = g.Username(id)
@@ -41,10 +49,16 @@ func buildKeyboard(r group.Record, g *group.Group) gotgbot.InlineKeyboardMarkup 
 		inlineKeyboard = append(inlineKeyboard, line)
 	}
 
-	inlineKeyboard = append(inlineKeyboard, []gotgbot.InlineKeyboardButton{
-		{Text: "取消", CallbackData: "cancel"},
-		{Text: "完成", CallbackData: "done"},
-	})
+	if opt == nil || !opt.NoCancel {
+		inlineKeyboard = append(inlineKeyboard, []gotgbot.InlineKeyboardButton{
+			{Text: "取消", CallbackData: "cancel"},
+			{Text: "完成", CallbackData: "done"},
+		})
+	} else {
+		inlineKeyboard = append(inlineKeyboard, []gotgbot.InlineKeyboardButton{
+			{Text: "完成", CallbackData: "done"},
+		})
+	}
 
 	return gotgbot.InlineKeyboardMarkup{
 		InlineKeyboard: inlineKeyboard,
@@ -88,7 +102,11 @@ func (bot *AASplitBot) billStart(b *gotgbot.Bot, ctx *ext.Context) error {
 		r.User = ctx.EffectiveUser.Id
 	}
 
-	replyMarkup := buildKeyboard(r, data.Group)
+	if len(r.Shared) == 0 {
+		r.Shared = keysOfMap(data.Default)
+	}
+
+	replyMarkup := buildKeyboard(r.Shared, data.Group, nil)
 
 	msg, err := b.SendMessage(
 		ctx.EffectiveChat.Id,
@@ -190,7 +208,7 @@ func (bot *AASplitBot) billChooseShared(b *gotgbot.Bot, ctx *ext.Context) error 
 	_, _, err := b.EditMessageReplyMarkup(&gotgbot.EditMessageReplyMarkupOpts{
 		ChatId:      ctx.EffectiveChat.Id,
 		MessageId:   msgID,
-		ReplyMarkup: buildKeyboard(r, data.Group),
+		ReplyMarkup: buildKeyboard(r.Shared, data.Group, nil),
 	})
 	if err != nil {
 		return err

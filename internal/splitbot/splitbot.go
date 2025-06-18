@@ -31,6 +31,7 @@ func id(ctx *ext.Context) int64 {
 type ChatData struct {
 	Group   *group.Group
 	Records map[int64]group.Record
+	Default map[int64]struct{} // 預設誰要分錢
 }
 
 type AASplitBot struct {
@@ -54,6 +55,7 @@ func (bot *AASplitBot) SetCommand(b *gotgbot.Bot, d *ext.Dispatcher) error {
 		{Command: "result", Description: "顯示分帳結果"},
 		{Command: "listbill", Description: "列出所有分帳紀錄"},
 		{Command: "listuser", Description: "列出所有使用者"},
+		{Command: "setdefault", Description: "設定預設分帳使用者"},
 		{Command: "clear", Description: "清除分帳紀錄"},
 		{Command: "start", Description: "歡迎訊息"},
 	}
@@ -65,6 +67,7 @@ func (bot *AASplitBot) SetCommand(b *gotgbot.Bot, d *ext.Dispatcher) error {
 	d.AddHandler(bot.Result())       // /result
 	d.AddHandler(bot.Help(commands)) // /help
 	d.AddHandler(bot.Clear())        // /clear
+	d.AddHandler(bot.SetDefault())   // /setdefault
 
 	ok, err := b.SetMyCommands(commands, &gotgbot.SetMyCommandsOpts{
 		Scope: gotgbot.BotCommandScopeAllGroupChats{},
