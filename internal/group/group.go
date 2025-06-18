@@ -123,3 +123,10 @@ func (g *Group) IDs() []int64 {
 
 	return ids
 }
+
+func (g *Group) Clear() {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
+
+	g.Bills = []Record{}
+}

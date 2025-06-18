@@ -52,17 +52,19 @@ func (bot *AASplitBot) SetCommand(b *gotgbot.Bot, d *ext.Dispatcher) error {
 		{Command: "help", Description: "顯示可用指令"},
 		{Command: "join", Description: "加入分帳"},
 		{Command: "result", Description: "顯示分帳結果"},
-		{Command: "listuser", Description: "列出所有使用者"},
 		{Command: "listbill", Description: "列出所有分帳紀錄"},
+		{Command: "listuser", Description: "列出所有使用者"},
+		{Command: "clear", Description: "清除分帳紀錄"},
 		{Command: "start", Description: "歡迎訊息"},
 	}
 	d.AddHandler(bot.Bill())
 	d.AddHandler(bot.Start())        // /start
 	d.AddHandler(bot.Join())         // /join
-	d.AddHandler(bot.ListUser())     // listuser
-	d.AddHandler(bot.ListBill())     // listbill
-	d.AddHandler(bot.Result())       // result
-	d.AddHandler(bot.Help(commands)) // help
+	d.AddHandler(bot.ListUser())     // /listuser
+	d.AddHandler(bot.ListBill())     // /listbill
+	d.AddHandler(bot.Result())       // /result
+	d.AddHandler(bot.Help(commands)) // /help
+	d.AddHandler(bot.Clear())        // /clear
 
 	ok, err := b.SetMyCommands(commands, &gotgbot.SetMyCommandsOpts{
 		Scope: gotgbot.BotCommandScopeAllGroupChats{},
