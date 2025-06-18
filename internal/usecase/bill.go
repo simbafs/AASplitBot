@@ -81,23 +81,18 @@ func (bot *AASplitBot) billStart(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	msg := ctx.EffectiveMessage
 
-	amountStr := strings.TrimPrefix(msg.Text, "$")
-	amount, err := strconv.Atoi(amountStr)
-	if err != nil {
-		return send("金額格式錯誤，請輸入以 $ 開頭的金額")
-	}
+	r := data.Group.ParseRecord(msg.Text)
+	slog.Debug("parse record", "record", r)
 
-	r := group.Record{
-		User:   ctx.EffectiveUser.Id,
-		Shared: []int64{},
-		Amount: amount,
+	if r.User == 0 {
+		r.User = ctx.EffectiveUser.Id
 	}
 
 	replyMarkup := buildKeyboard(r, data.Group)
 
-	msg, err = b.SendMessage(
+	msg, err := b.SendMessage(
 		ctx.EffectiveChat.Id,
-		fmt.Sprintf("%s 出了 %d 元", data.Group.Username(ctx.EffectiveUser.Id), amount),
+		fmt.Sprintf("%s 出了 %d 元", data.Group.Username(r.User), r.Amount),
 		&gotgbot.SendMessageOpts{
 			ReplyMarkup: &replyMarkup,
 		},
@@ -126,7 +121,11 @@ func (bot *AASplitBot) billChooseShared(b *gotgbot.Bot, ctx *ext.Context) error 
 
 	r, ok := data.Records[msgID]
 	if !ok {
-		return send("找不到記錄，請重新開始")
+		if err := send("找不到記錄，請重新開始"); err != nil {
+			return err
+		}
+
+		return handlers.EndConversation()
 	}
 
 	switch cb.Data {
@@ -137,7 +136,7 @@ func (bot *AASplitBot) billChooseShared(b *gotgbot.Bot, ctx *ext.Context) error 
 	case "cancel":
 		delete(data.Records, msgID)
 		_, _, err := b.EditMessageText(
-			fmt.Sprintf("%s 出了 %d 元（已取消）", data.Group.Username(ctx.EffectiveUser.Id), r.Amount),
+			fmt.Sprintf("%s 出了 %d 元（已取消）", data.Group.Username(r.User), r.Amount),
 			&gotgbot.EditMessageTextOpts{
 				ChatId:      ctx.EffectiveChat.Id,
 				MessageId:   msgID,
@@ -156,7 +155,7 @@ func (bot *AASplitBot) billChooseShared(b *gotgbot.Bot, ctx *ext.Context) error 
 			users = append(users, data.Group.Username(id))
 		}
 		_, _, err := b.EditMessageText(
-			fmt.Sprintf("%s 出了 %d 元，%s 要分錢", data.Group.Username(ctx.EffectiveUser.Id), r.Amount, strings.Join(users, "、")),
+			fmt.Sprintf("%s 出了 %d 元，%s 要分錢", data.Group.Username(r.User), r.Amount, strings.Join(users, "、")),
 			&gotgbot.EditMessageTextOpts{
 				ChatId:      ctx.EffectiveChat.Id,
 				MessageId:   msgID,

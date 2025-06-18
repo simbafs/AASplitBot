@@ -79,6 +79,15 @@ func (g *Group) Username(id int64) string {
 	return g.Users[id]
 }
 
+func (g *Group) ID(username string) (int64, bool) {
+	for id, name := range g.Users {
+		if name == username {
+			return id, true
+		}
+	}
+	return 0, false
+}
+
 // AddUser add new user, return false if the user already joint.
 func (g *Group) AddUser(id int64, name string) {
 	g.mutex.Lock()
