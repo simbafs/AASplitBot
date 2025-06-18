@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"aasplitbot/internal/config"
-	"aasplitbot/internal/usecase"
+	"aasplitbot/internal/splitbot"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -34,12 +34,12 @@ func run() error {
 		MaxRoutines: ext.DefaultMaxRoutines,
 	})
 
-	cases, err := usecase.New()
+	bot, err := splitbot.New()
 	if err != nil {
 		return fmt.Errorf("creating my bot: %w", err)
 	}
 
-	if err := cases.SetCommand(b, dispatcher); err != nil {
+	if err := bot.SetCommand(b, dispatcher); err != nil {
 		return fmt.Errorf("setting commands: %w", err)
 	}
 

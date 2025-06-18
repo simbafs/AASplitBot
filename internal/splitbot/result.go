@@ -1,4 +1,4 @@
-package usecase
+package splitbot
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"

@@ -1,4 +1,4 @@
-package usecase // TODO: renmae this package
+package splitbot // TODO: renmae this package
 
 import (
 	"fmt"
