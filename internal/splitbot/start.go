@@ -12,7 +12,7 @@ func (bot *AASplitBot) Start() ext.Handler {
 		msg := `歡迎使用分帳機器人
 開始使用之前每個人都要用指令 /join 加入分帳
 `
-		_, err := b.SendMessage(ctx.EffectiveChat.Id, msg, nil)
+		_, err := sendMessage(b, ctx, msg, nil)
 		return err
 	})
 }

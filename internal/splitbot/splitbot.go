@@ -11,9 +11,23 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
 
+func sendMessage(b *gotgbot.Bot, ctx *ext.Context, text string, opt *gotgbot.SendMessageOpts) (*gotgbot.Message, error) {
+	if ctx.EffectiveChat == nil {
+		return nil, fmt.Errorf("no effective chat")
+	}
+	if opt == nil {
+		opt = &gotgbot.SendMessageOpts{}
+	}
+	if ctx.EffectiveChat.IsForum {
+		opt.MessageThreadId = ctx.EffectiveMessage.MessageThreadId
+	}
+	m, err := ctx.EffectiveChat.SendMessage(b, text, opt)
+	return m, err
+}
+
 func sender(b *gotgbot.Bot, ctx *ext.Context) func(string, ...any) error {
 	return func(format string, args ...any) error {
-		_, err := ctx.EffectiveChat.SendMessage(b, fmt.Sprintf(format, args...), nil)
+		_, err := sendMessage(b, ctx, fmt.Sprintf(format, args...), nil)
 		return err
 	}
 }

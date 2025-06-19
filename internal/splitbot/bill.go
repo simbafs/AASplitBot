@@ -80,10 +80,6 @@ func (bot *AASplitBot) billStart(b *gotgbot.Bot, ctx *ext.Context) error {
 	data := bot.storage.Get(id(ctx))
 	defer bot.storage.Set(id(ctx), data)
 
-	if ctx.EffectiveChat.Type != gotgbot.ChatTypeGroup {
-		return send("目前只支援在群組中使用")
-	}
-
 	if data.Group == nil {
 		// TODO: 不需要初始化也能使用，用 SelectUser 之類的功能
 		return send("目前只支援在已經初始化的群組中使用")
@@ -108,8 +104,8 @@ func (bot *AASplitBot) billStart(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	replyMarkup := buildKeyboard(r.Shared, data.Group, nil)
 
-	msg, err := b.SendMessage(
-		ctx.EffectiveChat.Id,
+	msg, err := sendMessage(
+		b, ctx,
 		fmt.Sprintf("%s 出了 %d 元", data.Group.Username(r.User), r.Amount),
 		&gotgbot.SendMessageOpts{
 			ReplyMarkup: &replyMarkup,

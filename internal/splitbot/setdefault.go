@@ -54,7 +54,7 @@ func (bot *AASplitBot) startSetDefault() ext.Handler {
 			NoCancel: true,
 		})
 
-		_, err := ctx.EffectiveChat.SendMessage(b, "請選擇", &gotgbot.SendMessageOpts{
+		_, err := sendMessage(b, ctx, "請選擇", &gotgbot.SendMessageOpts{
 			ReplyMarkup: &inlineMarkup,
 		})
 		if err != nil {

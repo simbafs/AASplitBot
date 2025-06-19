@@ -19,7 +19,7 @@ func (bot *AASplitBot) Help(cmds []gotgbot.BotCommand) ext.Handler {
 
 		msg.WriteString("\n輸入以錢號（`$`）開頭、接續著一個數字的訊息可以新增分帳紀錄，例如 `$10`。\n")
 
-		_, err := ctx.EffectiveChat.SendMessage(b, msg.String(), nil)
+		_, err := sendMessage(b, ctx, msg.String(), nil)
 		return err
 	})
 }

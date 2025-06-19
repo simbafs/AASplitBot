@@ -15,10 +15,6 @@ func (bot *AASplitBot) Join() ext.Handler {
 		data := bot.storage.Get(id(ctx))
 		defer bot.storage.Set(id(ctx), data)
 
-		if ctx.EffectiveChat.Type != gotgbot.ChatTypeGroup {
-			return send("目前只支援在群組中使用")
-		}
-
 		if data.Group == nil {
 			data.Group = group.New()
 		}

@@ -20,6 +20,10 @@ func (bot *AASplitBot) Result() ext.Handler {
 			return send("無法取得結果: %s", err)
 		}
 
+		if result == "" {
+			return send("目前沒有任何紀錄")
+		}
+
 		send(result)
 
 		return nil
